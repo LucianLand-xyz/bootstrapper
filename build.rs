@@ -16,13 +16,13 @@ fn main() {
         res.set_icon("assets/Bootstrapper.ico");
         res.set_language(0x0409); // US English
         res.set("FileVersion", env!("CARGO_PKG_VERSION"));
-        res.set("FileDescription", "SYNTAX Windows Bootstrapper");
-        res.set("ProductName", "SYNTAX Bootstrapper");
+        res.set("FileDescription", "Windows Bootstrapper");
+        res.set("ProductName", "Bootstrapper");
         res.set("ProductVersion", env!("CARGO_PKG_VERSION"));
-        res.set("InternalName", "SYNTAX Bootstrapper");
-        res.set("OriginalFilename", "SyntaxPlayerLauncher.exe");
-        res.set("CompanyName", "SYNTAX Corporation");
-        res.set("LegalCopyright", "Copyright (c) 2023");
+        res.set("InternalName", "Bootstrapper");
+        res.set("OriginalFilename", "LucianLandPlayerLauncher.exe");
+        res.set("CompanyName", "Lucian Corporation");
+        res.set("LegalCopyright", "Copyright (c) 2024");
         res.compile().unwrap();
     }
 

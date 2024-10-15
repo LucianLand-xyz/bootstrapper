@@ -1,5 +1,5 @@
 [package]
-name = "syntax_bootstrapper"
+name = "lucian_bootstrapper"
 version = "1.4.1"
 edition = "2021"
 

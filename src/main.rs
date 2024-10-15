@@ -8,6 +8,8 @@ use md5;
 use zip_extract;
 use sha1::{Sha1, Digest};
 
+// why tf is this up here???
+// - Lucian
 #[cfg(target_os = "windows")]
 use std::os::windows::prelude::FileExt;
 #[cfg(target_os = "windows")]
@@ -122,7 +124,7 @@ pub async fn get_sha1_hash_of_file( path: &PathBuf ) -> String {
 }
 
 fn get_installation_directory() -> PathBuf {
-    return PathBuf::from(data_local_dir().unwrap().to_str().unwrap()).join("Syntax");
+    return PathBuf::from(data_local_dir().unwrap().to_str().unwrap()).join("LucianLand");
 }
 
 #[tokio::main]
@@ -144,13 +146,13 @@ async fn main() {
     }
 
     let args: Vec<String> = std::env::args().collect();
-    let base_url : &str = "www.syntax.eco";
-    let mut setup_url : &str = "setup.syntax.eco";
+    let base_url : &str = "www.lucianland.xyz";
+    let mut setup_url : &str = "setup.lucianland.xyz";
     let fallback_setup_url : &str = "d2f3pa9j0u8v6f.cloudfront.net";
-    let mut bootstrapper_filename :&str = "SyntaxPlayerLauncher.exe";
+    let mut bootstrapper_filename :&str = "LucianLandPlayerLauncher.exe";
     #[cfg(not(target_os = "windows"))]
     {
-        bootstrapper_filename = "SyntaxPlayerLinuxLauncher";
+        bootstrapper_filename = "LucianLandPlayerLinuxLauncher";
     }
     let build_date = include_str!(concat!(env!("OUT_DIR"), "/build_date.txt"));
     let startup_text = format!("
@@ -171,7 +173,7 @@ async fn main() {
         terminal_width = w;
     }
     if terminal_width < 80 {
-        print!("{}\n", format!("SYNTAX Bootstrapper | {} | Build Date: {} | Version: {}", base_url, build_date, env!("CARGO_PKG_VERSION")).to_string().magenta().cyan().italic().on_black()); // Fallback message
+        print!("{}\n", format!("Bootstrapper | {} | Build Date: {} | Version: {}", base_url, build_date, env!("CARGO_PKG_VERSION")).to_string().magenta().cyan().italic().on_black()); // Fallback message
     } else {
         let startup_text_lines = startup_text.lines().collect::<Vec<&str>>();
         //println!("{}", startup_text.bold().blue().on_black());
@@ -290,7 +292,7 @@ async fn main() {
                 std::process::Command::new("chmod").arg("+x").arg(latest_bootstrapper_path.to_str().unwrap()).spawn().unwrap();
 
                 let desktop_file_content = &format!("[Desktop Entry]
-Name=Syntax Launcher
+Name=Lucian Land Launcher
 Exec={} %u
 Icon={}
 Type=Application
@@ -298,10 +300,10 @@ Terminal=true
 Version={}
 MimeType=x-scheme-handler/syntax-player;", latest_bootstrapper_path.to_str().unwrap(), latest_bootstrapper_path.to_str().unwrap(), env!("CARGO_PKG_VERSION"));
                 
-                let desktop_file_path = dirs::data_local_dir().unwrap().join("applications").join("syntax-player.desktop");
+                let desktop_file_path = dirs::data_local_dir().unwrap().join("applications").join("lucianland-player.desktop");
                 std::fs::write(desktop_file_path, desktop_file_content).unwrap();
 
-                info("Please launch SYNTAX from the website, to continue with the update process.");
+                info("Please launch boostrapper from the website, to continue with the update process.");
                 std::thread::sleep(std::time::Duration::from_secs(20));
             }
             std::process::exit(0);
@@ -343,6 +345,8 @@ MimeType=x-scheme-handler/syntax-player;", latest_bootstrapper_path.to_str().unw
             zip_extract::extract(zip_file_cursor, target_dir, false).unwrap();
         }
 
+        // im gunna remove every client besides 2014 and 18
+
         let client_2018_directory = current_version_directory.join("Client2018");
         create_folder_if_not_exists(&client_2018_directory).await;
         extract_to_dir(&Client2018Zip, &client_2018_directory);
@@ -366,13 +370,12 @@ MimeType=x-scheme-handler/syntax-player;", latest_bootstrapper_path.to_str().unw
         info("Finished extracting files, cleaning up.");
         std::fs::remove_dir_all(&temp_downloads_directory).unwrap();
 
-        // Install the syntax-player scheme in the registry
-        info("Installing syntax-player scheme");
+        info("Installing lucianland-player scheme");
         #[cfg(target_os = "windows")]
         {
             let hkey_current_user = RegKey::predef(HKEY_CURRENT_USER);
             let hkey_classes_root : RegKey = hkey_current_user.open_subkey("Software\\Classes").unwrap();
-            let hkey_syntax_player = hkey_classes_root.create_subkey("syntax-player").unwrap().0;
+            let hkey_syntax_player = hkey_classes_root.create_subkey("lucianland-player").unwrap().0;
             let hkey_syntax_player_shell = hkey_syntax_player.create_subkey("shell").unwrap().0;
             let hkey_syntax_player_shell_open = hkey_syntax_player_shell.create_subkey("open").unwrap().0;
             let hkey_syntax_player_shell_open_command = hkey_syntax_player_shell_open.create_subkey("command").unwrap().0;
@@ -386,15 +389,15 @@ MimeType=x-scheme-handler/syntax-player;", latest_bootstrapper_path.to_str().unw
         {
             // Linux support
             let desktop_file_content = &format!("[Desktop Entry]
-Name=Syntax Launcher
+Name=lucianland Launcher
 Exec={} %u
 Icon={}
 Type=Application
 Terminal=true
 Version={}
-MimeType=x-scheme-handler/syntax-player;", latest_bootstrapper_path.to_str().unwrap(), latest_bootstrapper_path.to_str().unwrap(), env!("CARGO_PKG_VERSION"));
+MimeType=x-scheme-handler/lucianland-player;", latest_bootstrapper_path.to_str().unwrap(), latest_bootstrapper_path.to_str().unwrap(), env!("CARGO_PKG_VERSION"));
             
-            let desktop_file_path = dirs::data_local_dir().unwrap().join("applications").join("syntax-player.desktop");
+            let desktop_file_path = dirs::data_local_dir().unwrap().join("applications").join("lucianland-player.desktop");
             std::fs::write(desktop_file_path, desktop_file_content).unwrap();
         }
 
@@ -427,12 +430,12 @@ MimeType=x-scheme-handler/syntax-player;", latest_bootstrapper_path.to_str().unw
         // Just open the website
         #[cfg(target_os = "windows")]
         {
-            std::process::Command::new("cmd").arg("/c").arg("start").arg("https://www.syntax.eco/games").spawn().unwrap();
+            std::process::Command::new("cmd").arg("/c").arg("start").arg("https://www.lucianland.xyz/games").spawn().unwrap();
             std::process::exit(0);
         }
         #[cfg(not(target_os = "windows"))]
         {
-            std::process::Command::new("xdg-open").arg("https://www.syntax.eco/games").spawn().unwrap();
+            std::process::Command::new("xdg-open").arg("https://www.lucianland.xyz/games").spawn().unwrap();
             std::process::exit(0);
         }
     }
@@ -504,13 +507,13 @@ MimeType=x-scheme-handler/syntax-player;", latest_bootstrapper_path.to_str().unw
         let app_settings_path = current_version_directory.join("AppSettings.xml");
         std::fs::remove_file(app_settings_path).unwrap();
 
-        error("Failed to run SyntaxPlayerBeta.exe, is your antivirus removing it? The bootstrapper will attempt to redownload the client on next launch.");
+        error("Failed to run LucianLandPlayerBeta.exe, is your antivirus removing it? The bootstrapper will attempt to redownload the client on next launch.");
         std::thread::sleep(std::time::Duration::from_secs(20));
         std::process::exit(0);
     }
     match launch_mode.as_str() {
         "play" => {
-            info("Launching SYNTAX");
+            info("Launching Lucian Land!");
             #[cfg(target_os = "windows")]
             {           
                 let mut command = std::process::Command::new(client_executable_path);
